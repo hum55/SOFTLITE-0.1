@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación del Proyecto: Sistema de Inventario</title>
+
+  <!-- Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+
+/* =============================================
+   VARIABLES NEGRO + DORADO
+============================================= */
+:root{
+  --gold-main:#d4af37;
+  --gold-light:#f1d67a;
+  --gold-soft:#b8962e;
+  --black-main:#0b0b0b;
+  --black-soft:#141414;
+  --black-card:#1c1c1c;
+  --text-light:#e8e8e8;
+  --text-soft:#b8b8b8;
+  --border-gold:rgba(212,175,55,0.35);
+  --shadow:rgba(0,0,0,0.6);
+  --radius-lg:18px;
+  --radius-md:12px;
+  --radius-sm:8px;
+  --font:'Montserrat', sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:var(--font);
+  background:radial-gradient(circle at 30% 20%,#1a1a1a, #000000 70%);
+  color:var(--text-light);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* =============================================
+   DRAGONES DE FONDO
+============================================= */
+
+.bg-dragons{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.bg-dragons span{
+  position:absolute;
+  font-size:2.5rem;
+  opacity:0.07;
+  animation:floatDragon 20s ease-in-out infinite;
+}
+
+.bg-dragons span:nth-child(1){top:10%;left:5%;font-size:3rem}
+.bg-dragons span:nth-child(2){top:70%;left:90%;font-size:3rem}
+.bg-dragons span:nth-child(3){top:30%;left:85%;font-size:4rem}
+.bg-dragons span:nth-child(4){top:80%;left:20%;font-size:2.5rem}
+.bg-dragons span:nth-child(5){top:45%;left:50%;font-size:3rem}
+
+@keyframes floatDragon{
+0%,100%{transform:translateY(0) rotate(0deg)}
+50%{transform:translateY(-25px) rotate(8deg)}
+}
+
+/* =============================================
+   HEADER
+============================================= */
+
+header{
+  background:linear-gradient(135deg,#000000,#1a1a1a);
+  border-bottom:2px solid var(--gold-main);
+  color:var(--gold-main);
+  padding:3rem 1.5rem;
+  text-align:center;
+}
+
+header h1{
+  font-size:clamp(2rem,5vw,3rem);
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+header span{
+  display:block;
+  font-size:0.9rem;
+  color:var(--text-soft);
+}
+
+/* =============================================
+   CONTENEDOR
+============================================= */
+
+.container{
+  max-width:950px;
+  margin:auto;
+  padding:2rem 1.5rem;
+}
+
+/* =============================================
+   TARJETAS / SECCIONES
+============================================= */
+
+section{
+  background:var(--black-card);
+  border:1px solid var(--border-gold);
+  border-radius:var(--radius-lg);
+  padding:2rem;
+  margin-bottom:2rem;
+  box-shadow:0 10px 35px var(--shadow);
+  transition:transform .25s, box-shadow .25s;
+}
+
+section:hover{
+  transform:translateY(-5px);
+  box-shadow:0 15px 45px rgba(0,0,0,0.8);
+}
+
+/* dragón decorativo */
+
+section::before{
+  content:"🐉";
+  position:absolute;
+  right:25px;
+  font-size:1.6rem;
+  opacity:.15;
+}
+
+/* =============================================
+   TITULOS
+============================================= */
+
+h2{
+  color:var(--gold-main);
+  font-weight:800;
+  margin-bottom:1rem;
+  position:relative;
+}
+
+h2::after{
+  content:"";
+  display:block;
+  width:50px;
+  height:3px;
+  background:linear-gradient(90deg,var(--gold-main),transparent);
+  margin-top:6px;
+}
+
+/* =============================================
+   TEXTO
+============================================= */
+
+p{
+  color:var(--text-soft);
+  font-size:.95rem;
+  margin-bottom:.8rem;
+}
+
+strong{
+  color:var(--gold-light);
+}
+
+/* =============================================
+   LISTAS
+============================================= */
+
+ul,ol{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+}
+
+li{
+  background:linear-gradient(135deg,#1a1a1a,#0e0e0e);
+  border:1px solid var(--border-gold);
+  border-left:4px solid var(--gold-main);
+  padding:.65rem .9rem;
+  border-radius:var(--radius-sm);
+  font-size:.92rem;
+  display:flex;
+  gap:.5rem;
+  align-items:flex-start;
+}
+
+li:hover{
+  transform:translateX(5px);
+}
+
+/* =============================================
+   TECNOLOGIAS
+============================================= */
+
+.tech-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.6rem;
+}
+
+.tech-pill{
+  background:linear-gradient(135deg,#1a1a1a,#000000);
+  border:1px solid var(--gold-main);
+  color:var(--gold-light);
+  padding:.4rem .9rem;
+  border-radius:40px;
+  font-size:.8rem;
+  font-weight:600;
+  transition:.2s;
+}
+
+.tech-pill:hover{
+  background:var(--gold-main);
+  color:black;
+  transform:translateY(-3px);
+}
+
+/* =============================================
+   ROADMAP
+============================================= */
+
+.roadmap-item{
+  display:flex;
+  gap:1rem;
+  margin-bottom:1.2rem;
+}
+
+.roadmap-dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:var(--gold-main);
+  margin-top:6px;
+}
+
+.roadmap-content h3{
+  color:var(--gold-light);
+  font-size:.95rem;
+}
+
+.roadmap-content p{
+  font-size:.85rem;
+}
+
+/* =============================================
+   FOOTER
+============================================= */
+
+footer{
+  background:#000000;
+  border-top:2px solid var(--gold-main);
+  text-align:center;
+  padding:2rem;
+  color:var(--text-soft);
+}
+
+footer strong{
+  color:var(--gold-main);
+}
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+
+@media(max-width:640px){
+
+section{
+padding:1.4rem
+}
+
+header{
+padding:2rem 1rem
+}
+
+}
+
+</style>
+</head>
+<body>
+
+  <div class="bg-dragons">
+<span>🐉</span>
+<span>🐉</span>
+<span>🐉</span>
+<span>🐉</span>
+<span>🐉</span>
+</div>
+
+  <!-- ==========================================
+       ENCABEZADO PRINCIPAL
+  =========================================== -->
+  <header>
+    <div class="header-inner">
+      <span class="badge">📦 Documentación del Proyecto</span>
+
+      <!-- H1: Nombre del sistema -->
+      <h1>
+         SOFTLIFE
+        <span>Sistema de Punto de venta y de Inventario · Visión del Proyecto</span>
+      </h1>
+
+      <div class="header-meta">
+        <span class="tag">🛠️ En desarrollo</span>
+        <span class="tag">📅 2026</span>
+        <span class="tag">🌐 Full-Stack</span>
+        <span class="tag">🚀 Proyecto Personal</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       CONTENIDO PRINCIPAL
+  =========================================== -->
+  <main>
+    <div class="container">
+
+      <!-- SECCIÓN: Introducción -->
+      <section id="introduccion">
+        <div class="section-heading">
+          <div class="section-icon icon-pink">💡</div>
+          <h2>Introducción</h2>
+        </div>
+
+        <aside>
+          <p>
+            Todo proyecto nace de una necesidad real. <strong>BloomStock</strong> nació del caos de hojas de cálculo
+            y la certeza de que existía una solución más elegante.
+          </p>
+        </aside>
+
+        <p>
+          La idea de construir un <strong>Sistema de Punto de venta y de Inventario</strong> surge de una necesidad
+          concreta: muchas pequeñas empresas y emprendedores gestionan su stock con hojas de cálculo
+          desactualizadas, procesos manuales y errores costosos. Observar esa fricción cotidiana fue la
+          chispa que encendió este proyecto.
+        </p>
+        <p>
+          Más allá de resolver un problema real, este proyecto es una oportunidad para poner en práctica
+          mis habilidades como desarrollador de software, explorar arquitecturas modernas y documentar todo
+          el proceso de construcción desde cero hasta un producto funcional.
+        </p>
+        <p>
+          El <strong>objetivo general</strong> de <em>BloomStock</em> es ofrecer una plataforma web intuitiva
+          que permita a cualquier negocio —sin importar su tamaño— registrar, consultar y gestionar su
+          inventario de manera ágil, con reportes claros y un acceso seguro multiusuario.
+        </p>
+      </section>
+
+      <!-- SECCIÓN: Funcionalidades / MVP -->
+      <section id="funcionalidades">
+        <div class="section-heading">
+          <div class="section-icon icon-yellow">✅</div>
+          <h2>Funcionalidades Esperadas y Alcance</h2>
+        </div>
+
+        <p>
+          La primera versión del sistema —el <strong>Producto Mínimo Viable</strong>— estará enfocada
+          en las funcionalidades esenciales que aporten valor inmediato al usuario:
+        </p>
+
+        <!-- Lista desordenada de características -->
+        <ul>
+          <li>
+            <span class="li-icon">📦</span>
+            <span class="li-text">
+              <strong>Gestión de Productos (CRUD completo)</strong>
+              Crear, consultar, editar y eliminar productos con nombre, descripción, categoría, precio y unidad de medida.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📊</span>
+            <span class="li-text">
+              <strong>Control de Stock (Entradas y Salidas)</strong>
+              Registro de movimientos de inventario con fecha, cantidad, tipo de operación y usuario responsable.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🔔</span>
+            <span class="li-text">
+              <strong>Alertas de Stock Mínimo</strong>
+              Notificaciones visuales cuando un producto cae por debajo del umbral configurado, evitando quiebres de stock.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📈</span>
+            <span class="li-text">
+              <strong>Generación de Reportes Básicos</strong>
+              Resumen del estado actual del inventario, histórico de movimientos y productos con bajo stock, exportables a PDF.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🎨</span>
+            <span class="li-text">
+              <strong>Interfaz de Usuario Intuitiva</strong>
+              Diseño limpio, responsivo y accesible que funcione correctamente en dispositivos móviles y escritorio.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🔐</span>
+            <span class="li-text">
+              <strong>Autenticación y Login Seguro</strong>
+              Sistema de registro e inicio de sesión con tokens JWT, roles de usuario (administrador / operario) y cierre de sesión seguro.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🗂️</span>
+            <span class="li-text">
+              <strong>Gestión de Categorías</strong>
+              Organización de productos por categorías personalizables para facilitar la búsqueda y el filtrado.
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECCIÓN: Aprendizajes -->
+      <section id="aprendizajes">
+        <div class="section-heading">
+          <div class="section-icon icon-pink">🎯</div>
+          <h2>Objetivos de Aprendizaje Personal</h2>
+        </div>
+
+        <p>
+          Mi objetivo es poder aprender de todo para tener mas conocimientos, tener crecimiento personal, desarrollar un proyecto y 
+              que de sus frutos,pero mas que nada desarollar mis habilidades de trabajo en equipo y individual al igual que las softskills 
+              para tener mas oportunidades en un futuro ydesarrollar mas proyectos en un futuro.
+        </p>
+
+        <!-- Lista ordenada de aprendizajes -->
+        <ol>
+          <li>
+            <span class="li-icon">🗄️</span>
+            <span class="li-text">
+              <strong>Diseño de Bases de Datos Relacionales (SQL)</strong>
+              Modelado entidad-relación, normalización, índices, relaciones y buenas prácticas con MySQL / PostgreSQL.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🏗️</span>
+            <span class="li-text">
+              <strong>Arquitectura de Software (Patrón MVC)</strong>
+              Separación clara de responsabilidades entre Modelo, Vista y Controlador para construir código escalable y mantenible.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">⚛️</span>
+            <span class="li-text">
+              <strong>Desarrollo Frontend con React</strong>
+              Componentes reutilizables, hooks, manejo de estado global con Context API o Redux, y consumo de APIs REST.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">☕</span>
+            <span class="li-text">
+              <strong>Desarrollo Backend con Java / Spring Boot</strong>
+              Creación de APIs RESTful robustas, manejo de dependencias con Maven, seguridad con Spring Security y JWT.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🐙</span>
+            <span class="li-text">
+              <strong>Uso Avanzado de Git y GitHub</strong>
+              Estrategias de branching (Git Flow), pull requests, resolución de conflictos, y documentación del repositorio.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">☁️</span>
+            <span class="li-text">
+              <strong>Implementación en la Nube (AWS / Railway)</strong>
+              Despliegue del backend en un servidor en la nube, configuración de variables de entorno y dominio personalizado.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">⏱️</span>
+            <span class="li-text">
+              <strong>Gestión del Tiempo y Metodología Personal</strong>
+              Uso de Kanban personal (GitHub Projects / Notion) para planificar sprints, estimar tareas y mantener el ritmo.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📝</span>
+            <span class="li-text">
+              <strong>Documentación Técnica Profesional</strong>
+              Redacción de READMEs, docstrings, comentarios de código y documentación de API con Swagger/OpenAPI.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🧩</span>
+            <span class="li-text">
+              <strong>Pensamiento Lógico y Resolución de Problemas</strong>
+              Enfrentar bugs reales, decisiones de diseño con trade-offs y aprender a buscar soluciones de forma metódica.
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <!-- SECCIÓN: Stack Tecnológico -->
+      <section id="stack">
+        <div class="section-heading">
+          <div class="section-icon icon-yellow">🛠️</div>
+          <h2>Stack Tecnológico Propuesto</h2>
+        </div>
+
+        <p>
+          Las tecnologías seleccionadas buscan un equilibrio entre <strong>solidez en la industria</strong>
+          y <strong>curva de aprendizaje enriquecedora</strong>. El stack puede evolucionar conforme
+          avance el proyecto:
+        </p>
+
+        <!-- Pills de tecnologías -->
+        <div class="tech-grid">
+          <span class="tech-pill">🌐 HTML5</span>
+          <span class="tech-pill">🎨 CSS3</span>
+          <span class="tech-pill">⚡ JavaScript (ES2024)</span>
+          <span class="tech-pill">⚛️ React 18</span>
+          <span class="tech-pill">☕ Java 21</span>
+          <span class="tech-pill">🍃 Spring Boot 3</span>
+          <span class="tech-pill">🔐 Spring Security + JWT</span>
+          <span class="tech-pill">🗄️ MySQL 8</span>
+          <span class="tech-pill">🐙 Git + GitHub</span>
+          <span class="tech-pill">🐋 Docker</span>
+          <span class="tech-pill">☁️ Railway / AWS</span>
+          <span class="tech-pill">📄 Swagger / OpenAPI</span>
+        </div>
+      </section>
+
+        </div>
+      </section>
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ==========================================
+       PIE DE PÁGINA
+  =========================================== -->
+  <footer>
+    <p>
+       Documentación de Proyecto — Desarrollado con  por <strong>Dylan Vazquez Soriano</strong> &nbsp;·&nbsp; 2026
+    </p>
+  </footer>
+
+</body>
+</html>
