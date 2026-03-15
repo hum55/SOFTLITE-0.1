@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Horizontal</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Evita el scroll vertical */
+            font-family: 'Segoe UI', sans-serif;
+        }
 
+        /* Contenedor principal */
+        .horizontal-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory; /* Efecto imán */
+            scroll-behavior: smooth;
+        }
+
+        /* Secciones individuales */
+        section {
+            flex: 0 0 100vw; /* Cada sección ocupa el 100% del ancho */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            scroll-snap-align: start; /* Detiene el scroll justo al inicio de la sección */
+        }
+
+        .uno { background-color: #ff5f6d; }
+        .dos { background-color: #ffc371; }
+        .tres { background-color: #2193b0; }
+        .cuatro { background-color: #6dd5ed; }
+
+        /* Estilo para la barra de scroll (opcional) */
+        .horizontal-container::-webkit-scrollbar {
+            height: 10px;
+        }
+        .horizontal-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="horizontal-container">
+        <section class="uno">
+            <h1>Sección 01</h1>
+        </section>
+        <section class="dos">
+            <h1>Sección 02</h1>
+        </section>
+        <section class="tres">
+            <h1>Sección 03</h1>
+        </section>
+        <section class="cuatro">
+            <h1>Sección 04</h1>
+        </section>
+    </main>
+
+</body>
+</html>
