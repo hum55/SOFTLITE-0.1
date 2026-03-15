@@ -1,1 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación del Proyecto: Sistema de Inventario</title>
 
+  <!-- Google Fonts: tipografía elegante y moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===================================================
+       VARIABLES DE DISEÑO — Paleta pastel rosa y lila
+    =================================================== */
+    :root {
+      --rose-50:  #fff0f6;
+      --rose-100: #ffd6e7;
+      --rose-200: #ffadd2;
+      --rose-300: #ff85c0;
+      --rose-400: #f759aa;
+      --lilac-50:  #f5f0ff;
+      --lilac-100: #e8d8ff;
+      --lilac-200: #d3adff;
+      --lilac-300: #b37feb;
+      --lilac-400: #9254de;
+      --lilac-500: #722ed1;
+      --neutral-50:  #fafafa;
+      --neutral-100: #f3f0f7;
+      --neutral-200: #e6e0f0;
+      --neutral-700: #3d3550;
+      --neutral-800: #2a2140;
+      --neutral-900: #1a1230;
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+
+      --shadow-soft: 0 4px 24px rgba(114,46,209,.08), 0 1px 4px rgba(114,46,209,.05);
+      --shadow-card: 0 8px 32px rgba(114,46,209,.12), 0 2px 8px rgba(247,89,170,.06);
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 32px;
+    }
+
+    /* ===================================================
+       RESET & BASE
+    =================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--rose-50);
+      color: var(--neutral-800);
+      line-height: 1.7;
+      font-size: 1rem;
+      font-weight: 300;
+      /* Fondo con patrón de puntos suave */
+      background-image:
+        radial-gradient(circle at 80% 10%, rgba(211,173,255,.35) 0%, transparent 55%),
+        radial-gradient(circle at 10% 90%, rgba(255,133,192,.25) 0%, transparent 50%),
+        radial-gradient(#d3adff 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 28px 28px;
+    }
+
+    img, svg { display: block; max-width: 100%; }
+
+    a { color: var(--lilac-400); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===================================================
+       LAYOUT CONTENEDOR
+    =================================================== */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ===================================================
+       HEADER PRINCIPAL
+    =================================================== */
+    /* Cabecera del proyecto con gradiente rosa-lila */
+    .site-header {
+      background: linear-gradient(135deg, #ffd6e7 0%, #e8d8ff 50%, #ffadd2 100%);
+      border-bottom: 2px solid var(--rose-200);
+      padding: 3.5rem 1.5rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .site-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,.6) 0%, transparent 60%),
+        radial-gradient(circle at 80% 30%, rgba(211,173,255,.4) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(179,127,235,.35);
+      border-radius: 50px;
+      padding: .35rem 1.1rem;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--lilac-500);
+      margin-bottom: 1.2rem;
+    }
+
+    .site-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 400;
+      color: var(--neutral-800);
+      line-height: 1.2;
+      margin-bottom: .6rem;
+      position: relative;
+    }
+
+    .site-header h1 span {
+      color: var(--lilac-500);
+      font-style: italic;
+    }
+
+    .header-subtitle {
+      font-size: 1.05rem;
+      color: var(--neutral-700);
+      font-weight: 300;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Decoración — círculos flotantes */
+    .header-decoration {
+      position: absolute;
+      border-radius: 50%;
+      opacity: .5;
+      pointer-events: none;
+    }
+    .deco-1 { width: 120px; height: 120px; background: radial-gradient(var(--rose-200), transparent); top: -30px; right: 60px; }
+    .deco-2 { width: 80px;  height: 80px;  background: radial-gradient(var(--lilac-200), transparent); bottom: -20px; left: 40px; }
+    .deco-3 { width: 60px;  height: 60px;  background: radial-gradient(var(--rose-300), transparent); top: 20px; left: 15%; }
+
+    /* ===================================================
+       NAVEGACIÓN INTERNA (sticky pill)
+    =================================================== */
+    .sticky-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      padding: .6rem 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .sticky-nav nav {
+      display: flex;
+      gap: .4rem;
+      background: rgba(255,255,255,.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(211,173,255,.5);
+      border-radius: 50px;
+      padding: .4rem .6rem;
+      box-shadow: var(--shadow-soft);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .sticky-nav a {
+      font-size: .8rem;
+      font-weight: 500;
+      color: var(--neutral-700);
+      padding: .3rem .8rem;
+      border-radius: 50px;
+      transition: background .2s, color .2s;
+      white-space: nowrap;
+    }
+
+    .sticky-nav a:hover {
+      background: var(--lilac-100);
+      color: var(--lilac-500);
+      text-decoration: none;
+    }
+
+    /* ===================================================
+       ÁREA DE CONTENIDO PRINCIPAL
+    =================================================== */
+    main {
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ===================================================
+       SECCIONES
+    =================================================== */
+    section {
+      margin-bottom: 2.8rem;
+    }
+
+    /* Tarjeta de sección */
+    .card {
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(211,173,255,.4);
+      border-radius: var(--radius-md);
+      padding: 2rem 2.2rem;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+
+    /* Acento de color en el borde izquierdo de cada tarjeta */
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      border-radius: 20px 0 0 20px;
+    }
+    .card--rose::before   { background: linear-gradient(to bottom, var(--rose-300), var(--rose-200)); }
+    .card--lilac::before  { background: linear-gradient(to bottom, var(--lilac-300), var(--lilac-200)); }
+    .card--mixed::before  { background: linear-gradient(to bottom, var(--lilac-300), var(--rose-300)); }
+    .card--light::before  { background: linear-gradient(to bottom, var(--rose-200), var(--lilac-200)); }
+
+    /* Ícono decorativo en la esquina superior derecha de cada tarjeta */
+    .card-icon {
+      position: absolute;
+      top: 1.4rem;
+      right: 1.6rem;
+      font-size: 2rem;
+      opacity: .18;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================================================
+       TIPOGRAFÍA DE SECCIÓN
+    =================================================== */
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      font-weight: 400;
+      color: var(--neutral-800);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+
+    h2 .section-number {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--lilac-400);
+      background: var(--lilac-100);
+      border-radius: 50px;
+      padding: .15rem .6rem;
+      margin-right: .6rem;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+
+    p { margin-bottom: 1rem; color: var(--neutral-700); }
+    p:last-child { margin-bottom: 0; }
+
+    /* ===================================================
+       LISTAS
+    =================================================== */
+    ul, ol {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    /* Lista de características — con chip de color */
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      padding: .65rem .4rem;
+      border-bottom: 1px solid rgba(211,173,255,.2);
+      font-size: .95rem;
+      color: var(--neutral-700);
+    }
+    .feature-list li:last-child { border-bottom: none; }
+
+    .feature-list .chip {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+    }
+    .chip--rose   { background: var(--rose-100);  }
+    .chip--lilac  { background: var(--lilac-100); }
+    .chip--mixed  { background: linear-gradient(135deg, var(--rose-100), var(--lilac-100)); }
+
+    .feature-list strong { color: var(--neutral-800); font-weight: 500; }
+
+    /* Lista de aprendizajes — con numeración estilizada */
+    .learning-list li {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: .75rem;
+      align-items: start;
+      padding: .55rem 0;
+      font-size: .95rem;
+      color: var(--neutral-700);
+    }
+
+    .learning-list .num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--rose-200), var(--lilac-200));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--lilac-500);
+      flex-shrink: 0;
+    }
+
+    .learning-list .content strong { color: var(--neutral-800); display: block; font-weight: 500; margin-bottom: .1rem; }
+    .learning-list .content span   { font-size: .88rem; color: #6b5f87; }
+
+    /* ===================================================
+       GRID DE TECNOLOGÍAS
+    =================================================== */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: .85rem;
+      margin-top: .5rem;
+    }
+
+    .tech-card {
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(211,173,255,.4);
+      border-radius: var(--radius-sm);
+      padding: .9rem 1rem;
+      text-align: center;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .tech-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(114,46,209,.12);
+      border-color: var(--lilac-300);
+    }
+
+    .tech-card .tech-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .tech-card .tech-name { font-size: .85rem; font-weight: 500; color: var(--neutral-800); }
+    .tech-card .tech-role { font-size: .75rem; color: #9882b8; }
+
+    /* ===================================================
+       ASIDE / NOTA MOTIVACIONAL
+    =================================================== */
+    .motivational-aside {
+      background: linear-gradient(135deg, rgba(255,214,231,.6), rgba(232,216,255,.6));
+      border: 1px solid rgba(211,173,255,.5);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.8rem;
+      margin: 2.5rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .motivational-aside .quote-mark {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--lilac-300);
+      flex-shrink: 0;
+      margin-top: -.3rem;
+    }
+
+    .motivational-aside blockquote {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--neutral-700);
+      line-height: 1.6;
+    }
+
+    .motivational-aside cite {
+      display: block;
+      font-size: .8rem;
+      font-style: normal;
+      font-weight: 500;
+      color: var(--lilac-400);
+      margin-top: .5rem;
+    }
+
+    /* ===================================================
+       TIMELINE (roadmap simplificado)
+    =================================================== */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 9px; top: 6px; bottom: 6px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--rose-200), var(--lilac-300), var(--rose-200));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.4rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -1.75rem;
+      top: 6px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--rose-200);
+      border: 2px solid var(--lilac-300);
+    }
+
+    .timeline-item.active::before { background: var(--lilac-300); }
+    .timeline-item.future::before { background: white; }
+
+    .timeline-label {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--lilac-400);
+      margin-bottom: .2rem;
+    }
+    .timeline-title { font-weight: 500; color: var(--neutral-800); font-size: .95rem; }
+    .timeline-desc  { font-size: .85rem; color: #6b5f87; margin-top: .1rem; }
+
+    /* ===================================================
+       FOOTER
+    =================================================== */
+    /* Pie de página con gradiente suave */
+    .site-footer {
+      background: linear-gradient(135deg, var(--rose-100), var(--lilac-100));
+      border-top: 1px solid rgba(211,173,255,.4);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .site-footer .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--lilac-500);
+      margin-bottom: .4rem;
+    }
+
+    .site-footer p {
+      font-size: .85rem;
+      color: #9882b8;
+      margin: 0;
+    }
+
+    .site-footer .footer-tags {
+      display: flex;
+      gap: .5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: .8rem;
+    }
+
+    .footer-tag {
+      background: rgba(255,255,255,.6);
+      border: 1px solid rgba(211,173,255,.5);
+      border-radius: 50px;
+      padding: .2rem .7rem;
+      font-size: .75rem;
+      color: var(--lilac-400);
+    }
+
+    /* ===================================================
+       RESPONSIVE
+    =================================================== */
+    @media (max-width: 600px) {
+      .card { padding: 1.4rem 1.2rem; }
+      .sticky-nav nav { gap: .2rem; }
+      .sticky-nav a { font-size: .75rem; padding: .3rem .6rem; }
+      .tech-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+      .motivational-aside { flex-direction: column; gap: .4rem; }
+      .motivational-aside .quote-mark { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================================================
+       ENCABEZADO DEL PROYECTO
+  ================================================ -->
+  <header class="site-header" role="banner">
+    <div class="header-decoration deco-1"></div>
+    <div class="header-decoration deco-2"></div>
+    <div class="header-decoration deco-3"></div>
+
+    <div class="container">
+      <div class="header-badge"> Proyecto Personal · 2025</div>
+
+      <!-- Nombre del sistema -->
+      <h1>SoftLite — <span>Visión del Proyecto</span></h1>
+      <p class="header-subtitle">
+        Sistema de Venta y Control de Inventario · Documentación de arranque y hoja de ruta personal
+      </p>
+    </div>
+  </header>
+
+  <!-- ================================================
+       NAVEGACIÓN STICKY INTERNA
+  ================================================ -->
+  <div class="sticky-nav" role="navigation" aria-label="Navegación de secciones">
+    <nav>
+      <a href="#introduccion">Introducción</a>
+      <a href="#mvp">MVP</a>
+      <a href="#aprendizaje">Aprendizaje</a>
+      <a href="#stack">Stack</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+  </div>
+
+  <!-- ================================================
+       CONTENIDO PRINCIPAL
+  ================================================ -->
+  <main>
+    <div class="container">
+
+      <!-- ---- SECCIÓN: INTRODUCCIÓN ---- -->
+      <section id="introduccion" aria-labelledby="titulo-intro">
+        <article class="card card--rose" style="animation-delay:.05s">
+          <span class="card-icon">🌸</span>
+          <h2 id="titulo-intro">
+            <span class="section-number">01</span>Introducción
+          </h2>
+
+          <p>
+            <strong>SoftLite</strong> nació de una necesidad muy concreta: la frustración de gestionar ventas e inventario 
+            de forma manual, entre hojas de cálculo dispersas y apuntes que nunca estaban actualizados.
+            Con el tiempo esa incomodidad se convirtió en motivación, y la motivación en un proyecto real.
+          </p>
+          <p>
+            Este sistema tiene como objetivo general ser una aplicación web y sistema rentable completa que permita
+            <strong>registrar, consultar y controlar el inventario y / o venta</strong> de productos de manera
+            centralizada, confiable y accesible desde cualquier dispositivo. Más allá de la utilidad
+            práctica, SoftLite es mi laboratorio personal: un espacio donde quiero aprender haciendo,
+            enfrentarme a decisiones de arquitectura reales y salir del otro lado con experiencia sólida
+            para futuros proyectos.
+          </p>
+          <p>
+            La decisión de construirlo desde cero, y no usar una solución existente, es completamente
+            intencional. Cada error será una lección; cada feature completada, un logro tangible en equipo. 💜
+          </p>
+        </article>
+      </section>
+
+      <!-- Cita motivacional -->
+      <aside class="motivational-aside" aria-label="Cita inspiradora">
+        <span class="quote-mark">"</span>
+        <div>
+          <blockquote>
+            Los mejores proyectos no se construyen solo para funcionar — se construyen para que quien
+            los construyó también crezca en el proceso.
+          </blockquote>
+          <cite>— Filosofía de SoftLite</cite>
+        </div>
+      </aside>
+
+      <!-- ---- SECCIÓN: FUNCIONALIDADES (MVP) ---- -->
+      <section id="mvp" aria-labelledby="titulo-mvp">
+        <article class="card card--lilac" style="animation-delay:.1s">
+          <span class="card-icon">✨</span>
+          <h2 id="titulo-mvp">
+            <span class="section-number">02</span>Funcionalidades Esperadas y Alcance (MVP)
+          </h2>
+
+          <p>
+            El Producto Mínimo Viable se centrará en las funcionalidades esenciales que aporten
+            valor real desde el primer día. Todo lo demás llegará en iteraciones posteriores.
+          </p>
+
+          <!-- Lista de características del MVP -->
+          <ul class="feature-list" role="list">
+            <li>
+              <span class="chip chip--lilac">📦</span>
+              <div>
+                <strong>Gestión de Productos (CRUD completo)</strong><br>
+                Crear, leer, actualizar y eliminar productos con campos como nombre, categoría,
+                descripción, precio y código de referencia.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--rose">🔄</span>
+              <div>
+                <strong>Control de Stock — Entradas y Salidas</strong><br>
+                Registrar movimientos de inventario con fecha, cantidad y motivo, manteniendo
+                siempre un saldo actualizado por producto.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--lilac">🔐</span>
+              <div>
+                <strong>Sistema de Autenticación Segura</strong><br>
+                Login con correo y contraseña, manejo de sesiones con JWT, y protección de
+                rutas para garantizar que solo usuarios autorizados accedan al sistema.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--mixed">📊</span>
+              <div>
+                <strong>Generación de Reportes Básicos</strong><br>
+                Vista de productos con stock bajo, historial de movimientos y resumen general
+                del inventario exportable a PDF o CSV.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--rose">🖥️</span>
+              <div>
+                <strong>Interfaz de Usuario Intuitiva y Responsiva</strong><br>
+                Diseño limpio, accesible y adaptable a móviles, con navegación clara y tiempos
+                de carga óptimos.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--lilac">🔍</span>
+              <div>
+                <strong>Búsqueda y Filtrado de Productos</strong><br>
+                Filtros por categoría, nombre y estado del stock para encontrar cualquier
+                producto en segundos.
+              </div>
+            </li>
+            <li>
+              <span class="chip chip--mixed">⚠️</span>
+              <div>
+                <strong>Alertas de Stock Mínimo</strong><br>
+                Notificaciones visuales cuando un producto cae por debajo del umbral mínimo
+                definido por el usuario.
+              </div>
+            </li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- ---- SECCIÓN: OBJETIVOS DE APRENDIZAJE ---- -->
+      <section id="aprendizaje" aria-labelledby="titulo-aprendizaje">
+        <article class="card card--mixed" style="animation-delay:.15s">
+          <span class="card-icon">🌱</span>
+          <h2 id="titulo-aprendizaje">
+            <span class="section-number">03</span>Objetivos de Aprendizaje Personal
+          </h2>
+
+          <p>
+            Este proyecto no es solo un producto de software — es un plan de estudio disfrazado de
+            aplicación. Cada decisión técnica será una oportunidad deliberada de aprender algo nuevo
+            o consolidar algo que ya sé a medias.
+          </p>
+
+          <!-- Lista de aprendizajes técnicos y blandos -->
+          <ol class="learning-list" role="list">
+            <li>
+              <span class="num">1</span>
+              <div class="content">
+                <strong>Diseño de Bases de Datos Relacionales (SQL)</strong>
+                <span>Modelado entidad-relación, normalización, consultas optimizadas con MySQL o PostgreSQL.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">2</span>
+              <div class="content">
+                <strong>Arquitectura de Software — Patrón MVC</strong>
+                <span>Separación clara de responsabilidades entre Modelo, Vista y Controlador para escribir código mantenible.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">3</span>
+              <div class="content">
+                <strong>Desarrollo Frontend Moderno</strong>
+                <span>Construcción de interfaces dinámicas con React o Vue, manejo de estado y consumo de APIs REST.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">4</span>
+              <div class="content">
+                <strong>Desarrollo Backend con Node.js o Spring Boot</strong>
+                <span>Diseño de APIs RESTful, middlewares de autenticación, manejo de errores y validaciones robustas.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">5</span>
+              <div class="content">
+                <strong>Autenticación y Seguridad Web</strong>
+                <span>Implementación de JWT, hashing de contraseñas, protección contra inyecciones y buenas prácticas OWASP.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">6</span>
+              <div class="content">
+                <strong>Git Avanzado y Flujo de Trabajo Profesional</strong>
+                <span>Branching strategies (GitFlow), commits convencionales, pull requests y revisión de código.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">7</span>
+              <div class="content">
+                <strong>Implementación en la Nube (Cloud Deployment)</strong>
+                <span>Despliegue en plataformas como Railway, Render o AWS, configuración de entornos y variables de ambiente.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">8</span>
+              <div class="content">
+                <strong>Documentación Técnica Profesional</strong>
+                <span>Escribir READMEs claros, comentar el código de forma útil y documentar la API con herramientas como Swagger.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">9</span>
+              <div class="content">
+                <strong>Gestión del Tiempo y Planificación Personal</strong>
+                <span>Dividir el proyecto en sprints pequeños, establecer prioridades y mantener el avance constante sin quemarme.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">10</span>
+              <div class="content">
+                <strong>Resolución de Problemas y Pensamiento Lógico</strong>
+                <span>Desarrollar la capacidad de diagnosticar bugs, leer documentación y buscar soluciones de forma autónoma.</span>
+              </div>
+            </li>
+          </ol>
+        </article>
+      </section>
+
+      <!-- ---- SECCIÓN: STACK TECNOLÓGICO ---- -->
+      <section id="stack" aria-labelledby="titulo-stack">
+        <article class="card card--light" style="animation-delay:.2s">
+          <span class="card-icon">🛠️</span>
+          <h2 id="titulo-stack">
+            <span class="section-number">04</span>Stack Tecnológico Propuesto
+          </h2>
+
+          <p>
+            Estas son las tecnologías que tengo en mente para arrancar. Pueden evolucionar conforme
+            aprenda y tome decisiones más informadas durante el desarrollo.
+          </p>
+
+          <!-- Grid de tecnologías -->
+          <div class="tech-grid" role="list">
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🌐</div>
+              <div class="tech-name">HTML5 / CSS3</div>
+              <div class="tech-role">Estructura & estilos</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">⚡</div>
+              <div class="tech-name">JavaScript (ES6+)</div>
+              <div class="tech-role">Lógica cliente</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">⚛️</div>
+              <div class="tech-name">React</div>
+              <div class="tech-role">Frontend SPA</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🟢</div>
+              <div class="tech-name">Node.js</div>
+              <div class="tech-role">Runtime backend</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🚂</div>
+              <div class="tech-name">Express.js</div>
+              <div class="tech-role">Framework API REST</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🐬</div>
+              <div class="tech-name">MySQL</div>
+              <div class="tech-role">Base de datos</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🔑</div>
+              <div class="tech-name">JWT</div>
+              <div class="tech-role">Autenticación</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">🐙</div>
+              <div class="tech-name">Git + GitHub</div>
+              <div class="tech-role">Control de versiones</div>
+            </div>
+            <div class="tech-card" role="listitem">
+              <div class="tech-icon">☁️</div>
+              <div class="tech-name">Railway / Render</div>
+              <div class="tech-role">Deploy en la nube</div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ---- SECCIÓN: ROADMAP ---- -->
+      <section id="roadmap" aria-labelledby="titulo-roadmap">
+        <article class="card card--rose" style="animation-delay:.25s">
+          <span class="card-icon">🗺️</span>
+          <h2 id="titulo-roadmap">
+            <span class="section-number">05</span>Hoja de Ruta (Roadmap)
+          </h2>
+
+          <p>
+            Una guía flexible de fases para mantener el enfoque sin perder la motivación.
+            Cada etapa tiene entregables claros y está diseñada para aprender algo nuevo.
+          </p>
+
+          <!-- Timeline de fases del proyecto -->
+          <div class="timeline" role="list">
+            <div class="timeline-item active" role="listitem">
+              <div class="timeline-label">Fase 1 · Actual</div>
+              <div class="timeline-title">Planificación y Documentación</div>
+              <div class="timeline-desc">Definición del alcance, wireframes, diseño de la base de datos y configuración del repositorio.</div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-label">Fase 2</div>
+              <div class="timeline-title">Backend — API REST + Autenticación</div>
+              <div class="timeline-desc">CRUD de productos, movimientos de inventario, endpoints documentados con Swagger y tests básicos.</div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-label">Fase 3</div>
+              <div class="timeline-title">Frontend — Interfaz de Usuario</div>
+              <div class="timeline-desc">Componentes React, integración con la API, diseño responsivo y sistema de rutas protegidas.</div>
+            </div>
+            <div class="timeline-item future" role="listitem">
+              <div class="timeline-label">Fase 4</div>
+              <div class="timeline-title">Reportes y Funcionalidades Avanzadas</div>
+              <div class="timeline-desc">Exportación de reportes, alertas de stock, dashboard con métricas y filtros avanzados.</div>
+            </div>
+            <div class="timeline-item future" role="listitem">
+              <div class="timeline-label">Fase 5</div>
+              <div class="timeline-title">Despliegue en Producción</div>
+              <div class="timeline-desc">Configuración de entorno, CI/CD básico, deploy en la nube y dominio personalizado.</div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ================================================
+       PIE DE PÁGINA
+  ================================================ -->
+  <footer class="site-footer" role="contentinfo">
+    <p class="footer-logo">🌸 SoftLite</p>
+    <p>Documentación de Proyecto · Desarrollado por <strong>[Tu Nombre]</strong> · 2025</p>
+
+    <!-- Etiquetas decorativas de tecnologías -->
+    <div class="footer-tags" aria-label="Tecnologías del proyecto">
+      <span class="footer-tag">#React</span>
+      <span class="footer-tag">#NodeJS</span>
+      <span class="footer-tag">#MySQL</span>
+      <span class="footer-tag">#FullStack</span>
+      <span class="footer-tag">#OpenSource</span>
+      <span class="footer-tag">#LearningByDoing</span>
+    </div>
+  </footer>
+
+</body>
+</html>
