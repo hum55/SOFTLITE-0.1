@@ -1,1 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Mis Expectativas — SOFTLITE | Humberto Ramírez Gruintal</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #08090d;
+    --surface: #0f1118;
+    --card: #13151f;
+    --border: #1c1f2e;
+    --blue: #5b8def;
+    --blue2: #3b6fd4;
+    --cyan: #38bdf8;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --purple: #a78bfa;
+    --text: #e4e4e7;
+    --muted: #71717a;
+    --dim: #3f3f46;
+    --font: 'DM Sans', sans-serif;
+    --serif: 'Instrument Serif', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
 
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+
+  /* GRAIN */
+  body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-repeat: repeat; opacity:.5;
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; width:100%; padding:18px 48px;
+    display:flex; justify-content:space-between; align-items:center;
+    background:rgba(8,9,13,.8); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border); z-index:50;
+  }
+  .nav-left { display:flex; align-items:center; gap:12px; }
+  .nav-left .dot { width:8px; height:8px; border-radius:50%; background:var(--blue); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .nav-left span { font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+  .nav-links { display:flex; gap:24px; }
+  .nav-links a { font-size:12px; color:var(--muted); text-decoration:none; letter-spacing:.5px; transition:.2s; }
+  .nav-links a:hover { color:var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height:100vh; display:flex; flex-direction:column;
+    justify-content:center; padding:140px 48px 80px; position:relative;
+  }
+  .hero::before {
+    content:''; position:absolute; width:600px; height:600px;
+    background:radial-gradient(circle, rgba(91,141,239,.08) 0%, transparent 65%);
+    top:5%; right:10%; pointer-events:none;
+  }
+  .hero::after {
+    content:''; position:absolute; width:400px; height:400px;
+    background:radial-gradient(circle, rgba(56,189,248,.05) 0%, transparent 65%);
+    bottom:15%; left:5%; pointer-events:none;
+  }
+  .hero-label {
+    font-family:var(--mono); font-size:12px; color:var(--blue);
+    letter-spacing:3px; text-transform:uppercase; margin-bottom:20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero-label::before { content:''; width:32px; height:1px; background:var(--blue); }
+  .hero h1 {
+    font-family:var(--serif); font-size:clamp(42px,7vw,80px);
+    font-weight:400; line-height:1.05; margin-bottom:20px;
+    max-width:800px; color:#fff;
+  }
+  .hero h1 em { font-style:italic; color:var(--blue); }
+  .hero-desc {
+    font-size:17px; color:var(--muted); max-width:520px;
+    margin-bottom:32px; line-height:1.8;
+  }
+  .hero-author {
+    display:flex; align-items:center; gap:14px;
+    padding-top:24px; border-top:1px solid var(--border); max-width:420px;
+  }
+  .hero-avatar {
+    width:48px; height:48px; border-radius:50%;
+    background:linear-gradient(135deg, var(--blue), var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:16px; color:#fff; flex-shrink:0;
+  }
+  .hero-author-info .name { font-size:14px; font-weight:600; }
+  .hero-author-info .role { font-size:12px; color:var(--muted); }
+  .hero-author-info .role span { color:var(--blue); }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position:absolute; bottom:40px; left:48px;
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; color:var(--dim); letter-spacing:1px; text-transform:uppercase;
+  }
+  .scroll-line { width:24px; height:1px; background:var(--dim); }
+
+  /* SECTIONS */
+  section { padding:100px 48px; max-width:1100px; margin:0 auto; position:relative; }
+  .sec-label {
+    font-family:var(--mono); font-size:11px; color:var(--blue);
+    letter-spacing:3px; text-transform:uppercase; margin-bottom:8px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .sec-label::before { content:''; width:20px; height:1px; background:var(--blue); }
+  .sec-title {
+    font-family:var(--serif); font-size:clamp(28px,4vw,44px);
+    font-weight:400; color:#fff; margin-bottom:12px; line-height:1.15;
+  }
+  .sec-desc { font-size:15px; color:var(--muted); max-width:500px; margin-bottom:48px; }
+
+  /* DIVIDER */
+  .divider { width:100%; height:1px; background:var(--border); margin:0; }
+
+  /* EXPECTATION CARDS */
+  .exp-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .exp-card {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:32px; position:relative; overflow:hidden; transition:.3s;
+  }
+  .exp-card:hover { border-color:var(--blue); transform:translateY(-3px); }
+  .exp-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--blue), var(--cyan)); opacity:0; transition:.3s;
+  }
+  .exp-card:hover::before { opacity:1; }
+  .exp-num {
+    font-family:var(--mono); font-size:11px; color:var(--dim);
+    margin-bottom:16px; letter-spacing:2px;
+  }
+  .exp-card h3 { font-size:17px; font-weight:600; margin-bottom:8px; color:#fff; }
+  .exp-card p { font-size:13.5px; color:var(--muted); line-height:1.7; }
+
+  /* FULL WIDTH EXPECTATION */
+  .exp-full {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:40px; margin-top:20px; position:relative; overflow:hidden;
+  }
+  .exp-full::before {
+    content:''; position:absolute; top:0; left:0; bottom:0; width:3px;
+    background:linear-gradient(180deg, var(--blue), var(--purple));
+  }
+  .exp-full h3 { font-size:20px; font-weight:600; margin-bottom:10px; color:#fff; }
+  .exp-full p { font-size:14px; color:var(--muted); line-height:1.8; max-width:700px; }
+
+  /* ROLES */
+  .roles-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .role-card {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:28px 24px; text-align:center; position:relative; transition:.3s;
+  }
+  .role-card:hover { border-color: var(--accent-color, var(--blue)); transform:translateY(-3px); }
+  .role-icon {
+    width:56px; height:56px; border-radius:14px; margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+  }
+  .role-card h3 { font-size:14px; font-weight:600; margin-bottom:4px; color:#fff; }
+  .role-card .role-tag {
+    font-family:var(--mono); font-size:10px; letter-spacing:1px;
+    text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .role-card p { font-size:12.5px; color:var(--muted); line-height:1.6; }
+  .role-card .tech-tags { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin-top:14px; }
+  .role-card .tech-tags span {
+    font-family:var(--mono); font-size:10px; padding:3px 8px;
+    border-radius:4px; background:rgba(255,255,255,.04); color:var(--muted);
+    border:1px solid var(--border);
+  }
+
+  /* VISION QUOTE */
+  .vision-block {
+    background: linear-gradient(135deg, rgba(91,141,239,.06) 0%, rgba(56,189,248,.03) 100%);
+    border:1px solid rgba(91,141,239,.15); border-radius:16px;
+    padding:48px; text-align:center; position:relative;
+  }
+  .vision-block::before {
+    content:'"'; font-family:var(--serif); font-size:120px;
+    color:rgba(91,141,239,.1); position:absolute; top:-10px; left:32px; line-height:1;
+  }
+  .vision-block p {
+    font-family:var(--serif); font-size:clamp(20px,3vw,28px);
+    color:#fff; line-height:1.5; max-width:650px; margin:0 auto 20px;
+    font-style:italic;
+  }
+  .vision-block .attr { font-size:13px; color:var(--muted); }
+  .vision-block .attr b { color:var(--blue); }
+
+  /* GOALS TIMELINE */
+  .goals { display:flex; flex-direction:column; gap:0; position:relative; padding-left:32px; }
+  .goals::before {
+    content:''; position:absolute; left:7px; top:8px; bottom:8px;
+    width:1px; background:var(--border);
+  }
+  .goal-item { position:relative; padding:20px 0 20px 28px; }
+  .goal-item::before {
+    content:''; position:absolute; left:-29px; top:26px;
+    width:11px; height:11px; border-radius:50%;
+    border:2px solid var(--blue); background:var(--bg);
+  }
+  .goal-item.done::before { background:var(--blue); border-color:var(--blue); }
+  .goal-item .goal-phase {
+    font-family:var(--mono); font-size:10px; color:var(--dim);
+    letter-spacing:2px; text-transform:uppercase; margin-bottom:4px;
+  }
+  .goal-item h4 { font-size:15px; font-weight:600; color:#fff; margin-bottom:4px; }
+  .goal-item p { font-size:13px; color:var(--muted); line-height:1.6; max-width:550px; }
+
+  /* COMMITMENT */
+  .commit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .commit-card {
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:24px; text-align:center;
+  }
+  .commit-num {
+    font-family:var(--mono); font-size:32px; font-weight:700;
+    background:linear-gradient(135deg, var(--blue), var(--cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    margin-bottom:4px;
+  }
+  .commit-label { font-size:12px; color:var(--muted); }
+
+  /* FOOTER */
+  footer {
+    text-align:center; padding:48px; border-top:1px solid var(--border);
+    font-size:12px; color:var(--dim);
+  }
+  footer b { color:var(--muted); }
+
+  /* RESPONSIVE */
+  @media(max-width:800px) {
+    nav { padding:14px 20px; }
+    .nav-links { display:none; }
+    .hero, section { padding-left:24px; padding-right:24px; }
+    .exp-grid { grid-template-columns:1fr; }
+    .roles-grid { grid-template-columns:1fr 1fr; }
+    .commit-grid { grid-template-columns:1fr; }
+    .scroll-hint { display:none; }
+  }
+  @media(max-width:500px) {
+    .roles-grid { grid-template-columns:1fr; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  .fade-up { animation: fadeUp .7s ease-out both; }
+  .delay-1 { animation-delay:.1s; }
+  .delay-2 { animation-delay:.2s; }
+  .delay-3 { animation-delay:.3s; }
+  .delay-4 { animation-delay:.4s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="dot"></div>
+    <span>SOFTLITE — Expectativas</span>
+  </div>
+  <div class="nav-links">
+    <a href="#expectativas">Expectativas</a>
+    <a href="#roles">Mis Roles</a>
+    <a href="#vision">Visión</a>
+    <a href="#metas">Metas</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label fade-up">Documento personal de expectativas</div>
+  <h1 class="fade-up delay-1">Lo que espero<br/>construir con <em>SOFTLITE</em></h1>
+  <p class="hero-desc fade-up delay-2">
+    Este proyecto no es solo un sistema de punto de venta. Es la oportunidad de liderar, 
+    diseñar, programar y dirigir un producto real de principio a fin — tocando cada capa 
+    de la tecnología y cada decisión del negocio.
+  </p>
+  <div class="hero-author fade-up delay-3">
+    <div class="hero-avatar">HR</div>
+    <div class="hero-author-info">
+      <div class="name">Humberto Ramírez Gruintal</div>
+      <div class="role">CEO & Full-Stack Developer — <span>@JorgeTSW</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span> Scroll para explorar
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- EXPECTATIVAS -->
+<section id="expectativas">
+  <div class="sec-label">01 — Expectativas</div>
+  <div class="sec-title">Qué espero de este proyecto</div>
+  <div class="sec-desc">No busco solo entregar software. Busco crear algo que funcione en el mundo real, que resuelva problemas reales y que me forme como profesional completo.</div>
+
+  <div class="exp-grid">
+    <div class="exp-card">
+      <div class="exp-num">01</div>
+      <h3>Crear un producto real, no un proyecto escolar</h3>
+      <p>Quiero que SOFTLITE sea un sistema que un negocio de verdad pueda usar mañana mismo. Que un cajero lo entienda en 5 minutos, que un gerente vea sus ventas al instante, que el inventario nunca esté desactualizado. No quiero un prototipo bonito — quiero software que funcione bajo presión.</p>
+    </div>
+    <div class="exp-card">
+      <div class="exp-num">02</div>
+      <h3>Dominar toda la cadena de desarrollo</h3>
+      <p>Desde diseñar la base de datos hasta hacer que un botón se sienta bien al hacer clic. Quiero entender cada capa: cómo Spring Boot procesa una petición, cómo React renderiza la interfaz, cómo MySQL ejecuta una consulta. No quiero ser "el que sabe un poco de todo" — quiero ser el que puede construir todo.</p>
+    </div>
+    <div class="exp-card">
+      <div class="exp-num">03</div>
+      <h3>Aprender a liderar un equipo técnico</h3>
+      <p>Ser el CEO del proyecto significa tomar las decisiones difíciles: qué funcionalidad se queda, cuál se pospone, cómo resolver conflictos técnicos. Quiero desarrollar la capacidad de guiar a un equipo de 5 personas hacia un objetivo común, manteniendo la calidad y los plazos.</p>
+    </div>
+    <div class="exp-card">
+      <div class="exp-num">04</div>
+      <h3>Resolver problemas que importan</h3>
+      <p>Miles de tiendas en México operan con libretas y calculadoras. Quiero que SOFTLITE sea la solución que no necesita un ingeniero para instalarse, que no cuesta una fortuna y que hace lo que promete. Un sistema amigable que no necesita gran hardware — ese es el reto real.</p>
+    </div>
+  </div>
+
+  <div class="exp-full">
+    <h3>Salir de este proyecto siendo un desarrollador completo</h3>
+    <p>Al final de estos 2 años, mi expectativa es clara: quiero poder sentarme frente a cualquier problema de software y tener las herramientas mentales para resolverlo. No solo código — también arquitectura, gestión, costos, diseño y toma de decisiones. SOFTLITE es mi campo de entrenamiento real.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MIS ROLES -->
+<section id="roles">
+  <div class="sec-label">02 — Mis roles</div>
+  <div class="sec-title">Un proyecto, todos los sombreros</div>
+  <div class="sec-desc">No me limito a una sola área. En SOFTLITE ocupo cada rol porque quiero entender el sistema completo, de arriba a abajo.</div>
+
+  <div class="roles-grid">
+    <div class="role-card" style="--accent-color: var(--amber);">
+      <div class="role-icon" style="background:rgba(251,191,36,.1);">👔</div>
+      <h3>CEO del Proyecto</h3>
+      <span class="role-tag" style="color:var(--amber);">Dirección</span>
+      <p>Tomo las decisiones de negocio, defino prioridades del backlog, apruebo los entregables y mantengo al equipo alineado con la visión del producto. Gestiono costos, tiempos y alcance.</p>
+      <div class="tech-tags">
+        <span>Scrum Master</span>
+        <span>Product Owner</span>
+        <span>Costos</span>
+      </div>
+    </div>
+
+    <div class="role-card" style="--accent-color: var(--green);">
+      <div class="role-icon" style="background:rgba(52,211,153,.1);">🖥️</div>
+      <h3>Backend Developer</h3>
+      <span class="role-tag" style="color:var(--green);">Servidor</span>
+      <p>Construyo la API REST con Spring Boot, la lógica de negocio de cobro e inventario, autenticación JWT, servicios transaccionales y la arquitectura de microservicios.</p>
+      <div class="tech-tags">
+        <span>Java 17</span>
+        <span>Spring Boot</span>
+        <span>JWT</span>
+        <span>REST API</span>
+      </div>
+    </div>
+
+    <div class="role-card" style="--accent-color: var(--cyan);">
+      <div class="role-icon" style="background:rgba(56,189,248,.1);">🎨</div>
+      <h3>Frontend Developer</h3>
+      <span class="role-tag" style="color:var(--cyan);">Interfaz</span>
+      <p>Desarrollo la interfaz del punto de venta con React, el dashboard de métricas, el flujo de cobro optimizado para velocidad y la experiencia de usuario en todos los módulos.</p>
+      <div class="tech-tags">
+        <span>React 18</span>
+        <span>Vite</span>
+        <span>Tailwind</span>
+        <span>Zustand</span>
+      </div>
+    </div>
+
+    <div class="role-card" style="--accent-color: var(--purple);">
+      <div class="role-icon" style="background:rgba(167,139,250,.1);">🗄️</div>
+      <h3>Base de Datos</h3>
+      <span class="role-tag" style="color:var(--purple);">Datos</span>
+      <p>Diseño el modelo entidad-relación, optimizo consultas SQL, configuro JPA/Hibernate, gestiono migraciones, backups automáticos y la integridad de las transacciones ACID.</p>
+      <div class="tech-tags">
+        <span>MySQL</span>
+        <span>JPA</span>
+        <span>Hibernate</span>
+        <span>SQL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VISIÓN -->
+<section id="vision">
+  <div class="sec-label">03 — Visión personal</div>
+  <div class="sec-title">Por qué hago esto</div>
+  <div class="sec-desc">Más allá del código y las entregas, hay una razón de fondo.</div>
+
+  <div class="vision-block">
+    <p>Quiero demostrar que un equipo pequeño con las ideas claras puede construir software que compita con soluciones de millones de dólares — y que sea accesible para el negocio de la esquina.</p>
+    <div class="attr">— <b>Humberto Ramírez Gruintal</b>, CEO & Full-Stack Dev</div>
+  </div>
+
+  <div class="exp-grid" style="margin-top:40px;">
+    <div class="exp-card">
+      <div class="exp-num">Motivación</div>
+      <h3>Impacto real en negocios locales</h3>
+      <p>En México hay más de 1 millón de tiendas de abarrotes. La mayoría no tiene un sistema digital. SOFTLITE puede ser la herramienta que los lleve al siguiente nivel sin necesitar una inversión enorme ni un experto en tecnología.</p>
+    </div>
+    <div class="exp-card">
+      <div class="exp-num">Crecimiento</div>
+      <h3>Convertirme en un líder técnico</h3>
+      <p>Cada línea de código, cada sprint, cada decisión de arquitectura me acerca a ser el tipo de profesional que puede tomar un problema complejo y convertirlo en una solución elegante. Este proyecto es mi acelerador.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METAS -->
+<section id="metas">
+  <div class="sec-label">04 — Metas concretas</div>
+  <div class="sec-title">Lo que quiero lograr en cada fase</div>
+  <div class="sec-desc">Expectativas específicas y medibles a lo largo de los 2 años de desarrollo.</div>
+
+  <div class="goals">
+    <div class="goal-item done">
+      <div class="goal-phase">Meses 1 – 4</div>
+      <h4>Tener la arquitectura sólida y el equipo alineado</h4>
+      <p>Documento SRS completo, modelo de datos probado, stack tecnológico confirmado, primer prototipo funcional de la pantalla de cobro validado con usuarios reales.</p>
+    </div>
+    <div class="goal-item">
+      <div class="goal-phase">Meses 5 – 8</div>
+      <h4>Módulo de cobro funcionando de punta a punta</h4>
+      <p>Un cajero puede hacer una venta completa: escanear producto, aplicar descuento, cobrar con múltiples métodos de pago, imprimir ticket. Sin bugs críticos, en menos de 30 segundos.</p>
+    </div>
+    <div class="goal-item">
+      <div class="goal-phase">Meses 9 – 14</div>
+      <h4>Inventario, clientes y proveedores integrados</h4>
+      <p>El sistema de inventario refleja cada venta en tiempo real. Las alertas de stock funcionan. Los proveedores y clientes están vinculados correctamente con el flujo de cobro.</p>
+    </div>
+    <div class="goal-item">
+      <div class="goal-phase">Meses 15 – 20</div>
+      <h4>Dashboard, reportes y modo offline estables</h4>
+      <p>El gerente puede ver ventas del día, semana y mes con gráficas claras. Los reportes se exportan a PDF/Excel. El sistema funciona sin internet y sincroniza al reconectar.</p>
+    </div>
+    <div class="goal-item">
+      <div class="goal-phase">Meses 21 – 24</div>
+      <h4>Sistema en producción real con un negocio piloto</h4>
+      <p>SOFTLITE operando en una tienda real durante al menos 2 semanas. Todos los bugs críticos resueltos. Documentación completa. Sistema listo para escalar a más negocios.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPROMISO -->
+<section>
+  <div class="sec-label">05 — Mi compromiso</div>
+  <div class="sec-title">Los números detrás de la dedicación</div>
+  <div class="sec-desc">Lo que estoy dispuesto a invertir en SOFTLITE como líder y desarrollador principal.</div>
+
+  <div class="commit-grid" style="margin-bottom:40px;">
+    <div class="commit-card">
+      <div class="commit-num">24</div>
+      <div class="commit-label">Meses de desarrollo</div>
+    </div>
+    <div class="commit-card">
+      <div class="commit-num">4</div>
+      <div class="commit-label">Roles simultáneos</div>
+    </div>
+    <div class="commit-card">
+      <div class="commit-num">100%</div>
+      <div class="commit-label">Compromiso</div>
+    </div>
+  </div>
+
+  <div class="exp-full">
+    <h3>Lo que prometo al equipo y al proyecto</h3>
+    <p>
+      Me comprometo a estar en cada daily, revisar cada pull request, entender cada módulo 
+      del sistema y ser el primero en buscar solución cuando algo falle. No voy a ser el CEO 
+      que delega todo — voy a ser el que tiene las manos en el código, los ojos en el diseño 
+      y la mente en la estrategia. Si SOFTLITE triunfa, es porque todos pusimos todo. 
+      Y yo planeo poner más.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <b>⚡ SOFTLITE</b> — Expectativas del Proyecto<br/>
+  Humberto Ramírez Gruintal · CEO & Full-Stack Developer · 2025
+</footer>
+
+</body>
+</html>
