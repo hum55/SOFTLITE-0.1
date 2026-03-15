@@ -3,67 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scroll Horizontal</title>
+    <title>Portafolio Horizontal</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Evita el scroll vertical */
-            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden; /* Evita el scroll vertical del navegador */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111;
         }
 
-        /* Contenedor principal */
+        /* Contenedor que permite el movimiento horizontal */
         .horizontal-container {
             display: flex;
             width: 100vw;
             height: 100vh;
-            overflow-x: auto;
+            overflow-x: auto; /* Habilita el scroll horizontal */
             overflow-y: hidden;
-            scroll-snap-type: x mandatory; /* Efecto imán */
+            scroll-snap-type: x mandatory; /* Efecto de imán entre secciones */
             scroll-behavior: smooth;
         }
 
-        /* Secciones individuales */
+        /* Configuración de cada "página" o sección */
         section {
-            flex: 0 0 100vw; /* Cada sección ocupa el 100% del ancho */
+            flex: 0 0 100vw; /* Obliga a cada sección a medir el 100% del ancho */
             height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
+            flex-direction: column; /* Alinea tu contenido (h1, p, div) uno abajo del otro */
+            align-items: center;    /* Centra horizontalmente el texto */
+            justify-content: center; /* Centra verticalmente el texto */
+            scroll-snap-align: start;
             color: white;
-            scroll-snap-align: start; /* Detiene el scroll justo al inicio de la sección */
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .uno { background-color: #ff5f6d; }
-        .dos { background-color: #ffc371; }
-        .tres { background-color: #2193b0; }
-        .cuatro { background-color: #6dd5ed; }
+        /* Colores para distinguir las secciones */
+        .uno { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .dos { background: linear-gradient(135deg, #1e293b, #475569); }
+        .tres { background: linear-gradient(135deg, #581c87, #a855f7); }
+        .cuatro { background: linear-gradient(135deg, #064e3b, #10b981); }
 
-        /* Estilo para la barra de scroll (opcional) */
-        .horizontal-container::-webkit-scrollbar {
-            height: 10px;
-        }
-        .horizontal-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
+        /* Ajustes de tamaño de letra para que se vea limpio */
+        h1 { font-size: 3.5rem; margin: 10px 0; }
+        p { font-size: 1.8rem; margin: 0; opacity: 0.9; }
+        section div h1 { font-size: 1.5rem; text-transform: uppercase; opacity: 0.7; }
+
+        /* Barra de scroll personalizada (opcional) */
+        .horizontal-container::-webkit-scrollbar { height: 8px; }
+        .horizontal-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <main class="horizontal-container">
         <section class="uno">
-            <h1>Sección 01</h1>
+            <div>
+                <h1>M. en Ciencias</h1>
+            </div>
+            <h1>Jorge Javier Pedrozo Romero</h1>
+            <p>Programador | AWS services</p>
         </section>
+
         <section class="dos">
-            <h1>Sección 02</h1>
+            <h1>Experiencia</h1>
+            <p>Mucha...</p>
         </section>
+
         <section class="tres">
-            <h1>Sección 03</h1>
+            <h1>Hobbies</h1>
+            <p>Muchos...</p>
         </section>
+
         <section class="cuatro">
-            <h1>Sección 04</h1>
+            <h1>Aspiraciones</h1>
+            <p>Ser rico y millonario</p>
         </section>
     </main>
 
