@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación del Proyecto: Sistema de Inventario</title>
+
+  <!-- Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS VARIABLES Y RESET
+    ============================================= */
+    :root {
+      --pink-deep:    #d63384;
+      --pink-mid:     #f06292;
+      --pink-soft:    #f8bbd0;
+      --pink-pale:    #fce4ec;
+      --yellow-sun:   #fdd835;
+      --yellow-warm:  #fff176;
+      --yellow-pale:  #fffde7;
+      --white:        #ffffff;
+      --text-dark:    #3d1a2e;
+      --text-mid:     #6d3b57;
+      --text-light:   #a0627e;
+      --shadow:       rgba(214, 51, 132, 0.15);
+      --radius-lg:    20px;
+      --radius-md:    12px;
+      --radius-sm:    8px;
+      --font:         'Montserrat', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--yellow-pale);
+      color: var(--text-dark);
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* =============================================
+       FLORES SVG DECORATIVAS (inline, reutilizables)
+    ============================================= */
+    .flor {
+      display: inline-block;
+      user-select: none;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    /* =============================================
+       PATRÓN DE FONDO CON FLORES
+    ============================================= */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 20%, var(--pink-soft) 0%, transparent 35%),
+        radial-gradient(circle at 85% 75%, var(--yellow-warm) 0%, transparent 35%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 60%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Flores flotantes de fondo */
+    .bg-flowers {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .bg-flowers span {
+      position: absolute;
+      font-size: 1.8rem;
+      opacity: 0.12;
+      animation: floatPetal 18s ease-in-out infinite;
+    }
+    .bg-flowers span:nth-child(1)  { top: 5%;  left: 3%;  animation-delay: 0s;   font-size: 2.5rem; }
+    .bg-flowers span:nth-child(2)  { top: 15%; left: 90%; animation-delay: 2s;   font-size: 1.5rem; }
+    .bg-flowers span:nth-child(3)  { top: 35%; left: 7%;  animation-delay: 4s;   font-size: 3rem; }
+    .bg-flowers span:nth-child(4)  { top: 60%; left: 93%; animation-delay: 1s;   font-size: 2rem; }
+    .bg-flowers span:nth-child(5)  { top: 80%; left: 10%; animation-delay: 6s;   font-size: 1.8rem; }
+    .bg-flowers span:nth-child(6)  { top: 90%; left: 80%; animation-delay: 3s;   font-size: 2.5rem; }
+    .bg-flowers span:nth-child(7)  { top: 50%; left: 50%; animation-delay: 8s;   font-size: 1.2rem; }
+    .bg-flowers span:nth-child(8)  { top: 25%; left: 45%; animation-delay: 5s;   font-size: 2rem; }
+    .bg-flowers span:nth-child(9)  { top: 70%; left: 55%; animation-delay: 7s;   font-size: 1.6rem; }
+    .bg-flowers span:nth-child(10) { top: 45%; left: 20%; animation-delay: 9s;   font-size: 2.2rem; }
+
+    @keyframes floatPetal {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33%       { transform: translateY(-18px) rotate(8deg); }
+      66%       { transform: translateY(10px) rotate(-5deg); }
+    }
+
+    /* =============================================
+       LAYOUT PRINCIPAL
+    ============================================= */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    header {
+      background: linear-gradient(135deg, var(--pink-deep) 0%, var(--pink-mid) 60%, var(--yellow-sun) 100%);
+      color: var(--white);
+      padding: 3.5rem 1.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+      clip-path: ellipse(110% 100% at 50% 0%);
+    }
+
+    header::after {
+      content: '🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸';
+      display: block;
+      font-size: 1.4rem;
+      letter-spacing: 0.2rem;
+      margin-top: 1.5rem;
+      opacity: 0.35;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.75rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.55);
+      color: var(--white);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      backdrop-filter: blur(4px);
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.15;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.18);
+      letter-spacing: -0.01em;
+    }
+
+    header h1 span {
+      display: block;
+      font-size: 0.45em;
+      font-weight: 400;
+      opacity: 0.9;
+      letter-spacing: 0.04em;
+      margin-top: 0.3rem;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+    }
+
+    /* =============================================
+       MAIN
+    ============================================= */
+    main {
+      padding: 3rem 0 2rem;
+    }
+
+    /* =============================================
+       SECCIONES
+    ============================================= */
+    section {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 28px var(--shadow), 0 1px 4px rgba(0,0,0,0.04);
+      border: 1px solid var(--pink-soft);
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.6s ease both;
+    }
+
+    section:nth-child(2) { animation-delay: 0.1s; }
+    section:nth-child(3) { animation-delay: 0.2s; }
+    section:nth-child(4) { animation-delay: 0.3s; }
+    section:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Acento floral en esquina de cada sección */
+    section::before {
+      content: '🌸';
+      position: absolute;
+      top: 1.1rem;
+      right: 1.4rem;
+      font-size: 1.6rem;
+      opacity: 0.18;
+    }
+
+    section:nth-child(even)::before { content: '🌼'; }
+
+    /* =============================================
+       HEADINGS DE SECCIÓN
+    ============================================= */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .section-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .icon-pink   { background: var(--pink-pale); }
+    .icon-yellow { background: var(--yellow-warm); }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--pink-deep);
+      letter-spacing: -0.01em;
+    }
+
+    /* Línea decorativa bajo el h2 */
+    .section-heading h2::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--pink-mid), var(--yellow-sun));
+      margin-top: 0.3rem;
+    }
+
+    /* =============================================
+       TEXTO
+    ============================================= */
+    p {
+      color: var(--text-mid);
+      font-size: 0.97rem;
+      margin-bottom: 0.9rem;
+    }
+    p:last-child { margin-bottom: 0; }
+
+    strong {
+      color: var(--pink-deep);
+      font-weight: 700;
+    }
+
+    /* =============================================
+       LISTAS
+    ============================================= */
+    ul, ol {
+      padding-left: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    ul li, ol li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      background: linear-gradient(135deg, var(--pink-pale) 0%, var(--yellow-pale) 100%);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      border-left: 3px solid var(--pink-mid);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    ul li:hover, ol li:hover {
+      transform: translateX(4px);
+      box-shadow: 0 3px 14px var(--shadow);
+    }
+
+    ol li {
+      border-left-color: var(--yellow-sun);
+      counter-increment: step;
+    }
+
+    .li-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    .li-text strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--pink-deep);
+      margin-bottom: 0.1rem;
+    }
+
+    /* =============================================
+       STACK DE TECNOLOGÍAS - PILLS
+    ============================================= */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, var(--pink-soft), var(--yellow-warm));
+      color: var(--text-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.45rem 1rem;
+      border-radius: 100px;
+      border: 1.5px solid var(--pink-mid);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+
+    .tech-pill:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 20px var(--shadow);
+    }
+
+    /* =============================================
+       ASIDE / QUOTE DESTACADO
+    ============================================= */
+    aside {
+      background: linear-gradient(135deg, var(--pink-pale), var(--yellow-pale));
+      border-left: 5px solid var(--pink-deep);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 1.3rem 1.6rem;
+      margin: 1.4rem 0;
+      position: relative;
+    }
+
+    aside::before {
+      content: '"';
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--pink-soft);
+      position: absolute;
+      top: -0.6rem;
+      left: 0.8rem;
+      font-family: Georgia, serif;
+    }
+
+    aside p {
+      padding-left: 2.5rem;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--text-mid);
+    }
+
+    /* =============================================
+       PROGRESS / ROADMAP VISUAL
+    ============================================= */
+    .roadmap {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .roadmap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .roadmap-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .roadmap-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink-deep), var(--yellow-sun));
+      flex-shrink: 0;
+      box-shadow: 0 0 0 4px var(--pink-pale);
+      margin-top: 0.3rem;
+    }
+
+    .roadmap-connector {
+      width: 2px;
+      flex: 1;
+      min-height: 32px;
+      background: linear-gradient(to bottom, var(--pink-mid), var(--yellow-sun));
+      margin: 2px 0;
+      opacity: 0.4;
+    }
+
+    .roadmap-item:last-child .roadmap-connector {
+      display: none;
+    }
+
+    .roadmap-content {
+      padding-bottom: 1.6rem;
+      flex: 1;
+    }
+
+    .roadmap-content h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--pink-deep);
+      margin-bottom: 0.2rem;
+    }
+
+    .roadmap-content p {
+      font-size: 0.88rem;
+      margin: 0;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: linear-gradient(135deg, var(--pink-deep), var(--pink-mid) 55%, var(--yellow-sun) 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 2.5rem 1.5rem 2rem;
+      clip-path: ellipse(110% 100% at 50% 100%);
+      margin-top: 1rem;
+    }
+
+    footer::before {
+      content: '🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸🌼🌸';
+      display: block;
+      font-size: 1.2rem;
+      letter-spacing: 0.15rem;
+      margin-bottom: 1.2rem;
+      opacity: 0.45;
+      overflow: hidden;
+    }
+
+    footer p {
+      color: rgba(255,255,255,0.92);
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    footer strong {
+      color: var(--white);
+    }
+
+    .footer-flowers {
+      font-size: 1.5rem;
+      margin-top: 0.6rem;
+      letter-spacing: 0.3rem;
+      opacity: 0.7;
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 640px) {
+      section { padding: 1.6rem 1.3rem; }
+      header  { padding: 2.5rem 1.2rem 3rem; clip-path: ellipse(120% 100% at 50% 0%); }
+      footer  { clip-path: ellipse(130% 100% at 50% 100%); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Flores flotantes de fondo -->
+  <div class="bg-flowers" aria-hidden="true">
+    <span>🌸</span><span>🌼</span><span>🌸</span><span>🌺</span>
+    <span>🌼</span><span>🌸</span><span>💐</span><span>🌼</span>
+    <span>🌸</span><span>🌺</span>
+  </div>
+
+  <!-- ==========================================
+       ENCABEZADO PRINCIPAL
+  =========================================== -->
+  <header>
+    <div class="header-inner">
+      <span class="badge">📦 Documentación del Proyecto · MVP v1.0</span>
+
+      <!-- H1: Nombre del sistema -->
+      <h1>
+        🌸 Softlite
+        <span>SISTEMA DE VENTA Y APLICACIÓN DE INVENTARIO · Visión del Proyecto</span>
+      </h1>
+
+      <div class="header-meta">
+        <span class="tag">🛠️ En desarrollo</span>
+        <span class="tag">📅 2026</span>
+        <span class="tag">🌐 Full-Stack</span>
+        <span class="tag">🚀 Proyecto Personal</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       CONTENIDO PRINCIPAL
+  =========================================== -->
+  <main>
+    <div class="container">
+
+      <!-- SECCIÓN: Introducción -->
+      <section id="introduccion">
+        <div class="section-heading">
+          <div class="section-icon icon-pink">💡</div>
+          <h2>Introducción</h2>
+        </div>
+
+        <aside>
+          <p>
+            Todo proyecto nace de una necesidad real. <strong>Softlite</strong>
+          </p>
+        </aside>
+
+        <p>
+          La idea de construir un <strong>Sistema de venta y aplicación de inventario</strong> surge de una necesidad
+          concreta: muchas pequeñas empresas y emprendedores gestionan su stock con hojas de cálculo
+          desactualizadas, procesos manuales y errores costosos. Observar esa fricción cotidiana fue la
+          chispa que encendió este proyecto.
+        </p>
+        <p>
+          Más allá de resolver un problema real, este proyecto es una oportunidad para poner en práctica
+          mis habilidades como desarrolladora de software, explorar arquitecturas modernas y documentar todo
+          el proceso de construcción desde cero hasta un producto funcional.
+        </p>
+        <p>
+          El <strong>objetivo general</strong> de <em>Softlite</em> es ofrecer una plataforma web intuitiva
+          que permita a cualquier negocio, sin importar su tamaño, registrar, consultar y gestionar su
+          inventario de manera ágil, con reportes claros y un acceso seguro multiusuario.
+        </p>
+      </section>
+
+      <!-- SECCIÓN: Funcionalidades / MVP -->
+      <section id="funcionalidades">
+        <div class="section-heading">
+          <div class="section-icon icon-yellow">✅</div>
+          <h2>Funcionalidades Esperadas y Alcance (MVP)</h2>
+        </div>
+
+        <p>
+          La primera versión del sistema —el <strong>Producto Mínimo Viable</strong>— estará enfocada
+          en las funcionalidades esenciales que aporten valor inmediato al usuario:
+        </p>
+
+        <!-- Lista desordenada de características -->
+        <ul>
+          <li>
+            <span class="li-icon">📦</span>
+            <span class="li-text">
+              <strong>Gestión de Productos</strong>
+              Crear, consultar, editar y eliminar productos con nombre, descripción, categoría, precio y unidad de medida.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📊</span>
+            <span class="li-text">
+              <strong>Control de Stock (Entradas y Salidas)</strong>
+              Registro de movimientos de inventario con fecha, cantidad, tipo de operación y usuario responsable.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🔔</span>
+            <span class="li-text">
+              <strong>Alertas de Stock Mínimo</strong>
+              Notificaciones visuales cuando un producto cae por debajo del umbral configurado, evitando quiebres de stock.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📈</span>
+            <span class="li-text">
+              <strong>Generación de Reportes Básicos</strong>
+              Resumen del estado actual del inventario, histórico de movimientos y productos con bajo stock, exportables a PDF.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🎨</span>
+            <span class="li-text">
+              <strong>Interfaz de Usuario Intuitiva</strong>
+              Diseño limpio, responsivo y accesible que funcione correctamente en dispositivos móviles y escritorio.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🔐</span>
+            <span class="li-text">
+              <strong>Autenticación y Login Seguro</strong>
+              Sistema de registro e inicio de sesión con tokens JWT, roles de usuario (administrador / operario) y cierre de sesión seguro.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🗂️</span>
+            <span class="li-text">
+              <strong>Gestión de Categorías</strong>
+              Organización de productos por categorías personalizables para facilitar la búsqueda y el filtrado.
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECCIÓN: Aprendizajes -->
+      <section id="aprendizajes">
+        <div class="section-heading">
+          <div class="section-icon icon-pink">🎯</div>
+          <h2>Objetivos de Aprendizaje Personal</h2>
+        </div>
+
+        <p>
+          Este proyecto es tanto un producto de software como un <strong>laboratorio de aprendizaje</strong>.
+          A continuación, las habilidades concretas que espero desarrollar durante su construcción:
+        </p>
+
+        <!-- Lista ordenada de aprendizajes -->
+        <ol>
+          <li>
+            <span class="li-icon">🗄️</span>
+            <span class="li-text">
+              <strong>Diseño de Bases de Datos Relacionales (SQL)</strong>
+              Modelado entidad-relación, normalización, índices, relaciones y buenas prácticas con MySQL / PostgreSQL.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🏗️</span>
+            <span class="li-text">
+              <strong>Arquitectura de Software (Patrón MVC)</strong>
+              Separación clara de responsabilidades entre Modelo, Vista y Controlador para construir código escalable y mantenible.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">⚛️</span>
+            <span class="li-text">
+              <strong>Desarrollo Frontend con React</strong>
+              Componentes reutilizables, hooks, manejo de estado global con Context API o Redux, y consumo de APIs REST.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">☕</span>
+            <span class="li-text">
+              <strong>Desarrollo Backend con Java / Spring Boot</strong>
+              Creación de APIs RESTful robustas, manejo de dependencias con Maven, seguridad con Spring Security y JWT.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🐙</span>
+            <span class="li-text">
+              <strong>Uso Avanzado de Git y GitHub</strong>
+              Estrategias de branching (Git Flow), pull requests, resolución de conflictos, y documentación del repositorio.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">☁️</span>
+            <span class="li-text">
+              <strong>Implementación en la Nube (AWS / Railway)</strong>
+              Despliegue del backend en un servidor en la nube, configuración de variables de entorno y dominio personalizado.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">⏱️</span>
+            <span class="li-text">
+              <strong>Gestión del Tiempo y Metodología Personal</strong>
+              Uso de Kanban personal (GitHub Projects / Notion) para planificar sprints, estimar tareas y mantener el ritmo.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">📝</span>
+            <span class="li-text">
+              <strong>Documentación Técnica Profesional</strong>
+              Redacción de READMEs, docstrings, comentarios de código y documentación de API con Swagger/OpenAPI.
+            </span>
+          </li>
+          <li>
+            <span class="li-icon">🧩</span>
+            <span class="li-text">
+              <strong>Pensamiento Lógico y Resolución de Problemas</strong>
+              Enfrentar bugs reales, decisiones de diseño con trade-offs y aprender a buscar soluciones de forma metódica.
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <!-- SECCIÓN: Stack Tecnológico -->
+      <section id="stack">
+        <div class="section-heading">
+          <div class="section-icon icon-yellow">🛠️</div>
+          <h2>Stack Tecnológico Propuesto</h2>
+        </div>
+
+        <p>
+          Las tecnologías seleccionadas buscan un equilibrio entre <strong>solidez en la industria</strong>
+          y <strong>curva de aprendizaje enriquecedora</strong>. El stack puede evolucionar conforme
+          avance el proyecto:
+        </p>
+
+        <!-- Pills de tecnologías -->
+        <div class="tech-grid">
+          <span class="tech-pill">🌐 HTML5</span>
+          <span class="tech-pill">🎨 CSS3</span>
+          <span class="tech-pill">⚡ JavaScript (ES2024)</span>
+          <span class="tech-pill">⚛️ React 18</span>
+          <span class="tech-pill">☕ Java 21</span>
+          <span class="tech-pill">🍃 Spring Boot 3</span>
+          <span class="tech-pill">🔐 Spring Security + JWT</span>
+          <span class="tech-pill">🗄️ MySQL 8</span>
+          <span class="tech-pill">🐙 Git + GitHub</span>
+          <span class="tech-pill">🐋 Docker</span>
+          <span class="tech-pill">☁️ Railway / AWS</span>
+          <span class="tech-pill">📄 Swagger / OpenAPI</span>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: Roadmap visual -->
+      <section id="roadmap">
+        <div class="section-heading">
+          <div class="section-icon icon-pink">🗺️</div>
+          <h2>Roadmap de Desarrollo</h2>
+        </div>
+
+        <p>Etapas planeadas de forma iterativa, priorizando valor entregable en cada fase:</p>
+
+        <div class="roadmap">
+
+          <div class="roadmap-item">
+            <div class="roadmap-line">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-connector"></div>
+            </div>
+            <div class="roadmap-content">
+              <h3>🌱 Fase 1 — Fundamentos y Setup</h3>
+              <p>Repositorio, estructura del proyecto, base de datos, autenticación básica y CRUD de productos.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-item">
+            <div class="roadmap-line">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-connector"></div>
+            </div>
+            <div class="roadmap-content">
+              <h3>🌿 Fase 2 — Control de Movimientos</h3>
+              <p>Registro de entradas y salidas de stock, historial de movimientos y alertas de mínimo.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-item">
+            <div class="roadmap-line">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-connector"></div>
+            </div>
+            <div class="roadmap-content">
+              <h3>🌸 Fase 3 — Reportes e Interfaz Final</h3>
+              <p>Dashboard visual, generación de reportes PDF, refinamiento de UI y tests básicos.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-item">
+            <div class="roadmap-line">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-connector"></div>
+            </div>
+            <div class="roadmap-content">
+              <h3>🚀 Fase 4 — Despliegue y Documentación</h3>
+              <p>Deploy en la nube, documentación de API con Swagger y README final del repositorio.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-item">
+            <div class="roadmap-line">
+              <div class="roadmap-dot"></div>
+            </div>
+            <div class="roadmap-content">
+              <h3>🌟 Fase 5 — Iteración Post-MVP</h3>
+              <p>Feedback de usuarios reales, nuevas funcionalidades (importación CSV, multitienda, estadísticas avanzadas).</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ==========================================
+       PIE DE PÁGINA
+  =========================================== -->
+  <footer>
+    <p>
+      🌸 Documentación de Proyecto — Desarrollado con 💛 por <strong>Giovana Ruby Díaz Anduze</strong> &nbsp;·&nbsp; 2026
+    </p>
+    <div class="footer-flowers" aria-hidden="true">🌸 🌼 🌺 🌼 🌸</div>
+  </footer>
+
+</body>
+</html>
+
